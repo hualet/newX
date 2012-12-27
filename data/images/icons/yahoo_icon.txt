@@ -1,0 +1,49 @@
+0	tornado							yahoo00
+1	tropical storm                  yahoo00
+2	hurricane                       yahoo00
+3	severe thunderstorms            yahoo00
+4	thunderstorms                   yahoo00
+5	mixed rain and snow             yahoo02
+6	mixed rain and sleet            yahoo13
+7	mixed snow and sleet            yahoo13
+8	freezing drizzle                yahoo25
+9	drizzle                         yahoo25
+10	freezing rain                   yahoo22
+11	showers                         yahoo25
+12	showers                         yahoo22
+13	snow flurries                   yahoo03
+14	light snow showers              yahoo05
+15	blowing snow                    yahoo16
+16	snow                            yahoo05
+17	hail                            yahoo00
+18	sleet                           yahoo05
+19	dust                            yahoo15
+20	foggy                           yahoo17
+21	haze                            yahoo15
+22	smoky                           yahoo15
+23	blustery                        yahoo09
+24	windy                           yahoo09
+25	cold                            yahoo16
+26	cloudy                          yahoo10
+27	mostly cloudy (night)           yahoo12
+28	mostly cloudy (day)             yahoo04
+29	partly cloudy (night)           yahoo12
+30	partly cloudy (day)             yahoo04
+31	clear (night)                   yahoo01
+32	sunny                           yahoo06
+33	fair (night)                    yahoo18
+34	fair (day)                      yahoo11
+35	mixed rain and hail             yahoo00
+36	hot                             yahoo06
+37	isolated thunderstorms          yahoo07
+38	scattered thunderstorms         yahoo07
+39	scattered thunderstorms         yahoo20
+40	scattered showers               yahoo22
+41	heavy snow                      yahoo05
+42	scattered snow showers          yahoo05
+43	heavy snow                      yahoo05
+44	partly cloudy                   yahoo12
+45	thundershowers                  yahoo21
+46	snow showers                    yahoo05
+47	isolated thundershowers         yahoo08
+3200	not available               yahoo19
