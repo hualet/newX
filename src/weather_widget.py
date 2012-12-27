@@ -79,8 +79,10 @@ class WeatherPad(gtk.Window):
         hbox = gtk.HBox(False, 3)
         text_entry = gtk.Entry()
         find_button = gtk.Button("Enter")
+        cancel_button = gtk.Button("Cancel")
         hbox.pack_start(text_entry, True, True, 0)
         hbox.pack_start(find_button, False, False, 0)
+        hbox.pack_start(cancel_button, False, False, 0)
         
         result_window = gtk.ScrolledWindow()
         result_window.set_policy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
@@ -90,8 +92,18 @@ class WeatherPad(gtk.Window):
         main_box.pack_start(hbox, False, False, 0)
         main_box.pack_start(result_window, True, True, 0)
         find_button.connect("clicked", self.find_button_clicked, text_entry, vbox)
+        cancel_button.connect("clicked", self.cancel_button_clicked)
         self.add(main_box)
         self.show_all()
+        
+    def cancel_button_clicked(self):
+        '''
+        docs
+        '''
+        self.remove(self.get_children()[0])
+        self.add(self.pad)
+        self.show_all()
+    
         
     # to provide a better UE, then the button would not something like dead :-)
     def find_button_clicked(self, widget, text_entry, vbox):
