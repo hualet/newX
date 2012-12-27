@@ -1,4 +1,5 @@
 import urllib
+import urllib2
 import os
 import sys
 import pickle
@@ -56,6 +57,9 @@ code_icon_dict = {
 	3200:"yahoo19"
     }
 
+appid = "2N_GGsDV34GK3j0N1YAgVx3t6fV0Ovoy79u93JL33EfydDcDlie04jiSHa5bqTjO208-"
+
+
 def get_woeid_by_place(place):
     '''
     docs
@@ -101,8 +105,37 @@ def get_weather_information_by_woeid(woeid, place):
         weather_condition["location"] = place
 
         config_dir = os.path.expanduser(r"~/.config/deepin-weather/")
-        pickle.dump(weather_condition, open(config_dir + "weather_info_file", "w"))
+        weather_info_file = open(config_dir + "weather_info_file", "w")
+        pickle.dump(weather_condition, weather_info_file)
+        weather_info_file.close()
         return weather_condition
     except Exception, e:
         print e
         return None
+
+def get_place_by_woeid(woeid):
+    '''
+    docs
+    '''
+    try:
+        url_str = "http://where.yahooapis.com/v1/place/" + woeid + "?appid=" + appid
+        # i'm so proud of myself that i finally found out the problem and solved it :-)
+        rq = urllib2.Request(url_str)
+        rq.add_header("Accept-Language", "zh-CN,zh;q=0.8")
+        xml_str = urllib2.urlopen(rq).read()
+
+        dom = minidom.parseString(xml_str)
+        root = dom.documentElement
+        place_dict = {}
+        place_dict["country"] = root.getElementsByTagName("country")[0].childNodes[0].nodeValue
+        place_dict["admin1"] = root.getElementsByTagName("admin1")[0].childNodes[0].nodeValue
+        place_dict["admin2"] = root.getElementsByTagName("admin2")[0].childNodes[0].nodeValue
+        place_dict["admin3"] = root.getElementsByTagName("admin3")[0].childNodes[0].nodeValue
+        place_dict["locality1"] = root.getElementsByTagName("locality1")[0].childNodes[0].nodeValue
+        place_dict["all"] = place_dict["country"] + place_dict["admin1"] + place_dict["admin2"] + \
+            (place_dict["locality1"] if place_dict["locality1"] else place_dict["admin3"])
+        
+        return place_dict
+    except Exception, e:
+        print e
+        return None    

@@ -29,7 +29,10 @@ class WeatherPad(gtk.Window):
         self.set_app_paintable(False)
         self.set_colormap(gtk.gdk.Screen().get_rgba_colormap())
         self.set_resizable(False)
-#       self.set_keep_below(True)
+        self.set_keep_below(True)
+        self.move(1000, 100)
+        self.stick()
+        # self.set_skip_taskbar_hint(True)
 
         #To customizse location, but it will not be used recently
         #self.pad.connect("button_press_event", 
@@ -56,6 +59,8 @@ class WeatherPad(gtk.Window):
         coord_y = event.y
         if 210 <= coord_x <= 270 and 117 <= coord_y <= 134:
             self.open_preference()
+        if 270 <= coord_x <= 300 and 110 <= coord_y <= 140:
+            self.update_weather_information()
     
 
     def get_date_time_weekday(self):
@@ -69,7 +74,7 @@ class WeatherPad(gtk.Window):
     
     def open_preference(self, places_dict=None):
         self.remove(self.pad)
-        self.set_border_width(5)
+        # self.set_border_width(5)
         main_box = gtk.VBox(False, 2)
         hbox = gtk.HBox(False, 3)
         text_entry = gtk.Entry()
@@ -79,25 +84,41 @@ class WeatherPad(gtk.Window):
         
         result_window = gtk.ScrolledWindow()
         result_window.set_policy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
+        vbox = gtk.VBox()
+        result_window.add_with_viewport(vbox)
         
         main_box.pack_start(hbox, False, False, 0)
         main_box.pack_start(result_window, True, True, 0)
-        find_button.connect("clicked", self.find_button_clicked, text_entry, result_window)
+        find_button.connect("clicked", self.find_button_clicked, text_entry, vbox)
         self.add(main_box)
         self.show_all()
         
-    def find_button_clicked(self, widget, text_entry, result_window):
-        gobject.timeout_add(1, self.preference_find_place, widget, text_entry, result_window)
-    def preference_find_place(self, widget, text_entry, result_window):
+    # to provide a better UE, then the button would not something like dead :-)
+    def find_button_clicked(self, widget, text_entry, vbox):
+        if(text_entry.get_text()):
+            gobject.timeout_add(1, self.preference_find_place, widget, text_entry, vbox)
+    def preference_find_place(self, widget, text_entry, vbox):
+        print "preference_find_place"
         woeid_list = yahoo_service.get_woeid_by_place(text_entry.get_text())
         for woeid in woeid_list:
+            place_dict = yahoo_service.get_place_by_woeid(woeid)
+            button = gtk.Button(place_dict["all"])
+            button.connect("clicked", self.place_button_clicked, woeid, text_entry.get_text())
+            vbox.pack_start(button, False, False, 0)
+        self.show_all()
             
-
-
-
-
-
-
+    def place_button_clicked(self, widget, woeid, place):
+        '''
+        docs
+        '''
+        self.woeid = woeid
+        self.location = place
+        # the same trick here :-)
+        gobject.timeout_add(1, self.update_weather_information)
+        self.remove(self.get_children()[0])
+        self.add(self.pad)
+        self.show_all()
+    
         
     def update_weather_information(self):
         if(self.woeid):
@@ -134,7 +155,7 @@ class WeatherPad(gtk.Window):
         
         cr.set_source_rgb(1, 1, 1)
         layout.set_text(weather_information["location"])
-        cr.move_to(212, 117)
+        cr.move_to(212, 119)
         context.update_layout(layout)
         context.show_layout(layout)
         
