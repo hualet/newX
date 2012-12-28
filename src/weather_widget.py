@@ -50,6 +50,7 @@ class WeatherPad(gtk.Window):
         self.add(self.pad)
         self.connect("destroy", gtk.main_quit)
         self.show_all()
+        gobject.timeout_add(600000, self.auto_update_daemon)
 
     def button_press_callback(self, widget, event):
         '''
@@ -144,6 +145,13 @@ class WeatherPad(gtk.Window):
         self.remove(self.get_children()[0])
         self.add(self.pad)
         self.show_all()
+    
+    def auto_update_daemon(self):
+        '''
+        docs
+        '''
+        self.update_weather_information()
+        gobject.timeout_add(600000)
     
         
     def update_weather_information(self):
