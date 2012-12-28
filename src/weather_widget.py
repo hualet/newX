@@ -21,6 +21,8 @@ class WeatherPad(gtk.Window):
 #        self.old_weather_information = weather_information        
 #        self.new_weather_information = None
         self.weather_information = weather_information
+        self.woeid = self.weather_information["woeid"]
+        self.location = self.weather_information["location"]
         self.pad = gtk.DrawingArea()
         self.pad.add_events(gtk.gdk.ALL_EVENTS_MASK)
 
@@ -120,12 +122,9 @@ class WeatherPad(gtk.Window):
             self.show_all()
             gobject.timeout_add(1, self.preference_find_place, widget, text_entry, vbox, label)
     def preference_find_place(self, widget, text_entry, vbox, label):
-        print "preference_find_place"
         woeid_list = yahoo_service.get_woeid_by_place(text_entry.get_text())
         for woeid in woeid_list:
-            print woeid
             place_dict = yahoo_service.get_place_by_woeid(woeid)
-            print place_dict
             button = gtk.Button(place_dict["all"])
             button.connect("clicked", self.place_button_clicked, woeid, text_entry.get_text())
             vbox.pack_start(button, False, False, 0)
@@ -151,16 +150,23 @@ class WeatherPad(gtk.Window):
         docs
         '''
         self.update_weather_information()
-        gobject.timeout_add(600000)
+        gobject.timeout_add(600000, self.auto_update_daemon)
     
-        
+    # I splited the update_weather_information into two parts for the purpose of refreshing the ui,
+    # showing people that i'm updating alreay, gtk won't refresh the ui 
+    # even you explicitly called "queue_draw" or something while responsing the event_callbacks.
     def update_weather_information(self):
-        if(self.woeid):
-            weather_information = yahoo_service.get_weather_information_by_woeid(self.woeid, self.location)
-            if(weather_information):
-                self.weather_information = weather_information
-            else:
-                self.weather_information["pic"] = "yahoo19"
+        if(hasattr(self, "woeid")):
+            print "update_weather_information"
+            self.weather_information["temp"] = self.weather_information["temp"] + "  Updating..."
+            gobject.timeout_add(100, self.update_weather_information_real)
+    def update_weather_information_real(self):
+        print "update_weather_information_real"
+        weather_information = yahoo_service.get_weather_information_by_woeid(self.woeid, self.location)
+        if(weather_information):
+            self.weather_information = weather_information
+        else:
+            self.weather_information["pic"] = "yahoo19"
     
     def draw_weather_information(self, weather_information):
         '''
@@ -244,10 +250,6 @@ class WeatherPad(gtk.Window):
         context.update_layout(layout)
         context.show_layout(layout)
         
-#        if self.old_weather_information["from"] == "from_file":
-#            self.draw_weather_information(self.old_weather_information)
-#        if self.new_weather_information != None:
-#            self.draw_weather_information(self.new_weather_information)
         self.draw_weather_information(self.weather_information)
 
         self.queue_draw()
