@@ -126,12 +126,24 @@ def get_place_by_woeid(woeid):
 
         dom = minidom.parseString(xml_str)
         root = dom.documentElement
-        place_dict = {}
-        place_dict["country"] = root.getElementsByTagName("country")[0].childNodes[0].nodeValue
-        place_dict["admin1"] = root.getElementsByTagName("admin1")[0].childNodes[0].nodeValue
-        place_dict["admin2"] = root.getElementsByTagName("admin2")[0].childNodes[0].nodeValue
-        place_dict["admin3"] = root.getElementsByTagName("admin3")[0].childNodes[0].nodeValue
-        place_dict["locality1"] = root.getElementsByTagName("locality1")[0].childNodes[0].nodeValue
+        place_dict = {
+            "country" : "",
+            "admin1" : "",
+            "admin2" : "",
+            "admin3" : "",
+            "locality1" : ""
+            }
+        if(root.getElementsByTagName("country")[0].childNodes):
+            place_dict["country"] = root.getElementsByTagName("country")[0].childNodes[0].nodeValue
+        if(root.getElementsByTagName("admin1")[0].childNodes):
+            place_dict["admin1"] = root.getElementsByTagName("admin1")[0].childNodes[0].nodeValue
+        if(root.getElementsByTagName("admin2")[0].childNodes):
+            place_dict["admin2"] = root.getElementsByTagName("admin2")[0].childNodes[0].nodeValue
+        if(root.getElementsByTagName("admin3")[0].childNodes):
+            place_dict["admin3"] = root.getElementsByTagName("admin3")[0].childNodes[0].nodeValue
+        if(root.getElementsByTagName("locality1")[0].childNodes):
+            place_dict["locality1"] = root.getElementsByTagName("locality1")[0].childNodes[0].nodeValue
+
         place_dict["all"] = place_dict["country"] + place_dict["admin1"] + place_dict["admin2"] + \
             (place_dict["locality1"] if place_dict["locality1"] else place_dict["admin3"])
         

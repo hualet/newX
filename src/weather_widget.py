@@ -74,14 +74,15 @@ class WeatherPad(gtk.Window):
     
     def open_preference(self, places_dict=None):
         self.remove(self.pad)
-        # self.set_border_width(5)
+        self.set_border_width(5)
+        self.set_opacity(0.7)
         main_box = gtk.VBox(False, 2)
         hbox = gtk.HBox(False, 3)
         text_entry = gtk.Entry()
-        find_button = gtk.Button("Enter")
+        search_button = gtk.Button("Search")
         cancel_button = gtk.Button("Cancel")
         hbox.pack_start(text_entry, True, True, 0)
-        hbox.pack_start(find_button, False, False, 0)
+        hbox.pack_start(search_button, False, False, 0)
         hbox.pack_start(cancel_button, False, False, 0)
         
         result_window = gtk.ScrolledWindow()
@@ -89,34 +90,45 @@ class WeatherPad(gtk.Window):
         vbox = gtk.VBox()
         result_window.add_with_viewport(vbox)
         
-        main_box.pack_start(hbox, False, False, 0)
-        main_box.pack_start(result_window, True, True, 0)
-        find_button.connect("clicked", self.find_button_clicked, text_entry, vbox)
+        main_box.pack_start(gtk.Label("Set your location : "), False, False, 0)
+        main_box.pack_start(hbox, False, False, 5)
+        main_box.pack_start(result_window, True, True, 5)
+        search_button.connect("clicked", self.search_button_clicked, text_entry, vbox)
         cancel_button.connect("clicked", self.cancel_button_clicked)
         self.add(main_box)
         self.show_all()
         
-    def cancel_button_clicked(self):
+    def cancel_button_clicked(self, widget):
         '''
         docs
         '''
+        self.set_border_width(0)
+        self.set_opacity(1)
         self.remove(self.get_children()[0])
         self.add(self.pad)
         self.show_all()
     
         
     # to provide a better UE, then the button would not something like dead :-)
-    def find_button_clicked(self, widget, text_entry, vbox):
+    def search_button_clicked(self, widget, text_entry, vbox):
         if(text_entry.get_text()):
-            gobject.timeout_add(1, self.preference_find_place, widget, text_entry, vbox)
-    def preference_find_place(self, widget, text_entry, vbox):
+            for widget in vbox.get_children():
+                vbox.remove(widget)
+            label = gtk.Label("Searching...")
+            vbox.pack_start(label, False, False, 0)
+            self.show_all()
+            gobject.timeout_add(1, self.preference_find_place, widget, text_entry, vbox, label)
+    def preference_find_place(self, widget, text_entry, vbox, label):
         print "preference_find_place"
         woeid_list = yahoo_service.get_woeid_by_place(text_entry.get_text())
         for woeid in woeid_list:
+            print woeid
             place_dict = yahoo_service.get_place_by_woeid(woeid)
+            print place_dict
             button = gtk.Button(place_dict["all"])
             button.connect("clicked", self.place_button_clicked, woeid, text_entry.get_text())
             vbox.pack_start(button, False, False, 0)
+        vbox.remove(label)
         self.show_all()
             
     def place_button_clicked(self, widget, woeid, place):
@@ -127,6 +139,8 @@ class WeatherPad(gtk.Window):
         self.location = place
         # the same trick here :-)
         gobject.timeout_add(1, self.update_weather_information)
+        self.set_border_width(0)
+        self.set_opacity(1)
         self.remove(self.get_children()[0])
         self.add(self.pad)
         self.show_all()
@@ -134,7 +148,11 @@ class WeatherPad(gtk.Window):
         
     def update_weather_information(self):
         if(self.woeid):
-            self.weather_information = yahoo_service.get_weather_information_by_woeid(self.woeid, self.location)
+            weather_information = yahoo_service.get_weather_information_by_woeid(self.woeid, self.location)
+            if(weather_information):
+                self.weather_information = weather_information
+            else:
+                self.weather_information["pic"] = "yahoo19"
     
     def draw_weather_information(self, weather_information):
         '''
