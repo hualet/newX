@@ -6,6 +6,8 @@ import pangocairo
 import gobject
 
 import yahoo_service
+from pad_detail import WeatherForecastWindow
+from utils import (fade_in, fade_out)
 
 class WeatherPad(gtk.Window):
     '''
@@ -48,6 +50,7 @@ class WeatherPad(gtk.Window):
         
         self.pad.connect("button_press_event", self.button_press_callback)
         self.pad.connect("motion-notify-event", self.motion_notify_callback)
+        self.pad.connect("leave-notify-event", self.leave_notify_callback)
         self.pad_expose_connect_id = self.pad.connect("expose-event", self.pad_expose)
 
         self.add(self.pad)
@@ -62,7 +65,7 @@ class WeatherPad(gtk.Window):
         coord_x = event.x
         coord_y = event.y
         if 210 <= coord_x <= 270 and 117 <= coord_y <= 134:
-            gobject.timeout_add(45, self.fade_out, self, 0.05, self.open_preference)
+            gobject.timeout_add(45, fade_out, self, 0.05, self.open_preference)
         if 270 <= coord_x <= 300 and 110 <= coord_y <= 140:
             self.update_weather_information()
             
@@ -72,39 +75,22 @@ class WeatherPad(gtk.Window):
         
         if 190 <= coord_x <= 300 and 0 <= coord_y <= 80:
             if not hasattr(self, "forecast_window"):
-                    self.forecast_window = self.show_forecast_window()
+                (temp_x, temp_y) = self.get_position()
+                (width, hight) = self.get_size()
+                pos_x = temp_x 
+                pos_y = temp_y + hight
+                self.forecast_window = WeatherForecastWindow(self.weather_information, pos_x, pos_y)
         else:
             if hasattr(self, "forecast_window"):            
                 if self.forecast_window:
                     self.forecast_window.destroy()
                     del self.forecast_window
             
-            
-    def fade_in(self, widget, step=0.05, callback=None, *user_data):
-        if widget.get_opacity() < 1:
-            widget.set_opacity(widget.get_opacity() + step)
-        elif callable(callback):
-            if(user_data):
-                callback(*user_data)
-            else:
-                callback()
-            return False
-        else:
-            return False
-        return True
-    
-    def fade_out(self, widget, step=0.05, callback=None, *user_data):
-        if widget.get_opacity() > 0:
-            widget.set_opacity(widget.get_opacity() - step)
-        elif callable(callback):
-            if(user_data):
-                callback(*user_data)
-            else:
-                callback()
-            return False
-        else:
-            return False
-        return True
+    def leave_notify_callback(self, widget, event):
+        if hasattr(self, "forecast_window"):            
+            if self.forecast_window:
+                self.forecast_window.destroy()
+                del self.forecast_window
 
     def get_date_time_weekday(self):
         '''
@@ -114,13 +100,6 @@ class WeatherPad(gtk.Window):
         [str_time, str_date, str_weekday] = str_date_time_weekday.split(' ')
         
         return str_time, str_date, str_weekday
-    
-    def show_forecast_window(self):
-        win = gtk.Window()
-        win.set_decorated(False)
-        win.set_size_request(300, 300)
-        win.show()
-        return win
     
     def open_preference(self, places_dict=None):
         self.remove(self.pad)
@@ -147,7 +126,7 @@ class WeatherPad(gtk.Window):
         cancel_button.connect("clicked", self.cancel_button_clicked)
         self.add(main_box)
         self.show_all()
-        gobject.timeout_add(15, self.fade_in, self, 0.1)
+        gobject.timeout_add(15, fade_in, self, 0.1)
         
     def cancel_button_clicked(self, widget):
         '''
@@ -158,8 +137,8 @@ class WeatherPad(gtk.Window):
             self.remove(self.get_children()[0])
             self.add(self.pad)
             self.show_all()
-            gobject.timeout_add(45, self.fade_in, self, 0.05)
-        gobject.timeout_add(15, self.fade_out, self, 0.1, cancel_button_show_main)
+            gobject.timeout_add(45, fade_in, self, 0.05)
+        gobject.timeout_add(15, fade_out, self, 0.1, cancel_button_show_main)
     
         
     # to provide a better UE, then the button would not something like dead :-)

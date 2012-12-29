@@ -5,6 +5,8 @@ import sys
 import pickle
 import xml.dom.minidom as minidom
 
+from utils import compute_wind
+
 code_icon_dict = {
 	0  : "yahoo00",
         1  : "yahoo00",
@@ -101,9 +103,32 @@ def get_weather_information_by_woeid(woeid, place):
         weather_condition["code"] = weather_condition_ele.getAttribute("code")
         weather_condition["temp"] = weather_condition_ele.getAttribute("temp") + u"\u2103" 
         weather_condition["pic"] = code_icon_dict[int(weather_condition["code"])]
+        
+        weather_wind_ele = root.getElementsByTagName("yweather:wind")[0]
+        wind_direction = weather_wind_ele.getAttribute("direction")
+        wind_speed = weather_wind_ele.getAttribute("speed")
+        weather_condition["wind"] = compute_wind(wind_speed, wind_direction)
+
+        weather_atmosphere_ele = root.getElementsByTagName("yweather:atmosphere")[0]
+        weather_condition["humidity"] = weather_atmosphere_ele.getAttribute("humidity")
+        weather_condition["visibility"] = weather_atmosphere_ele.getAttribute("visibility")
+        if weather_condition["visibility"] == u"":
+            weather_condition["visibility"] = "Unknown"
+        
+        weather_forecast_eles = root.getElementsByTagName("yweather:forecast")
+        for index, ele in enumerate(weather_forecast_eles):
+            index += 1
+            weather_condition["forecast" + str(index)] = {}
+            weather_condition["forecast" + str(index)]["low"] = ele.getAttribute("low")
+            weather_condition["forecast" + str(index)]["high"] = ele.getAttribute("high") + u"\u2103"
+            weather_condition["forecast" + str(index)]["text"] = ele.getAttribute("text")
+            weather_condition["forecast" + str(index)]["code"] = ele.getAttribute("code")
+            weather_condition["forecast" + str(index)]["pic"] = code_icon_dict[int(ele.getAttribute("code"))]
+        
         weather_condition["woeid"] = woeid        
         weather_condition["location"] = place
 
+        print weather_condition
         config_dir = os.path.expanduser(r"~/.config/deepin-weather/")
         weather_info_file = open(config_dir + "weather_info_file", "w")
         pickle.dump(weather_condition, weather_info_file)
