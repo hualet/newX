@@ -18,8 +18,6 @@ class WeatherPad(gtk.Window):
         '''
         gtk.Window.__init__(self)
         
-#        self.old_weather_information = weather_information        
-#        self.new_weather_information = None
         self.weather_information = weather_information
         self.woeid = self.weather_information["woeid"]
         self.location = self.weather_information["location"]
@@ -27,12 +25,14 @@ class WeatherPad(gtk.Window):
         self.pad.add_events(gtk.gdk.ALL_EVENTS_MASK)
 
         self.set_decorated(False) 
-        self.set_size_request(300, 300)
+        self.set_size_request(300, 165)
         self.set_app_paintable(False)
         self.set_colormap(gtk.gdk.Screen().get_rgba_colormap())
         self.set_resizable(False)
         self.set_keep_below(True)
-        self.move(1000, 100)
+        
+        #1024 :-)
+        self.move(1024, 100)
         self.stick()
         # self.set_skip_taskbar_hint(True)
 
@@ -47,12 +47,13 @@ class WeatherPad(gtk.Window):
         #            )), self )
         
         self.pad.connect("button_press_event", self.button_press_callback)
+        self.pad.connect("motion-notify-event", self.motion_notify_callback)
         self.pad_expose_connect_id = self.pad.connect("expose-event", self.pad_expose)
 
         self.add(self.pad)
         self.connect("destroy", gtk.main_quit)
         self.show_all()
-        gobject.timeout_add(600000, self.auto_update_daemon)
+        gobject.timeout_add(600000, self.update_weather_information)
 
     def button_press_callback(self, widget, event):
         '''
@@ -61,10 +62,49 @@ class WeatherPad(gtk.Window):
         coord_x = event.x
         coord_y = event.y
         if 210 <= coord_x <= 270 and 117 <= coord_y <= 134:
-            self.open_preference()
+            gobject.timeout_add(45, self.fade_out, self, 0.05, self.open_preference)
         if 270 <= coord_x <= 300 and 110 <= coord_y <= 140:
             self.update_weather_information()
+            
+    def motion_notify_callback(self, widget, event):
+        coord_x = event.x
+        coord_y = event.y
+        
+        if 190 <= coord_x <= 300 and 0 <= coord_y <= 80:
+            if not hasattr(self, "forecast_window"):
+                    self.forecast_window = self.show_forecast_window()
+        else:
+            if hasattr(self, "forecast_window"):            
+                if self.forecast_window:
+                    self.forecast_window.destroy()
+                    del self.forecast_window
+            
+            
+    def fade_in(self, widget, step=0.05, callback=None, *user_data):
+        if widget.get_opacity() < 1:
+            widget.set_opacity(widget.get_opacity() + step)
+        elif callable(callback):
+            if(user_data):
+                callback(*user_data)
+            else:
+                callback()
+            return False
+        else:
+            return False
+        return True
     
+    def fade_out(self, widget, step=0.05, callback=None, *user_data):
+        if widget.get_opacity() > 0:
+            widget.set_opacity(widget.get_opacity() - step)
+        elif callable(callback):
+            if(user_data):
+                callback(*user_data)
+            else:
+                callback()
+            return False
+        else:
+            return False
+        return True
 
     def get_date_time_weekday(self):
         '''
@@ -75,11 +115,18 @@ class WeatherPad(gtk.Window):
         
         return str_time, str_date, str_weekday
     
+    def show_forecast_window(self):
+        win = gtk.Window()
+        win.set_decorated(False)
+        win.set_size_request(300, 300)
+        win.show()
+        return win
+    
     def open_preference(self, places_dict=None):
         self.remove(self.pad)
         self.set_border_width(5)
-        self.set_opacity(0.7)
-        main_box = gtk.VBox(False, 2)
+        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(29184, 49152, 59136))
+        main_box = gtk.VBox(False, 1)
         hbox = gtk.HBox(False, 3)
         text_entry = gtk.Entry()
         search_button = gtk.Button("Search")
@@ -89,27 +136,30 @@ class WeatherPad(gtk.Window):
         hbox.pack_start(cancel_button, False, False, 0)
         
         result_window = gtk.ScrolledWindow()
-        result_window.set_policy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
+        result_window.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         vbox = gtk.VBox()
         result_window.add_with_viewport(vbox)
         
         main_box.pack_start(gtk.Label("Set your location : "), False, False, 0)
-        main_box.pack_start(hbox, False, False, 5)
-        main_box.pack_start(result_window, True, True, 5)
+        main_box.pack_start(hbox, False, False, 2)
+        main_box.pack_start(result_window, True, True, 2)
         search_button.connect("clicked", self.search_button_clicked, text_entry, vbox)
         cancel_button.connect("clicked", self.cancel_button_clicked)
         self.add(main_box)
         self.show_all()
+        gobject.timeout_add(15, self.fade_in, self, 0.1)
         
     def cancel_button_clicked(self, widget):
         '''
         docs
         '''
-        self.set_border_width(0)
-        self.set_opacity(1)
-        self.remove(self.get_children()[0])
-        self.add(self.pad)
-        self.show_all()
+        def cancel_button_show_main():
+            self.set_border_width(0)
+            self.remove(self.get_children()[0])
+            self.add(self.pad)
+            self.show_all()
+            gobject.timeout_add(45, self.fade_in, self, 0.05)
+        gobject.timeout_add(15, self.fade_out, self, 0.1, cancel_button_show_main)
     
         
     # to provide a better UE, then the button would not something like dead :-)
@@ -145,12 +195,6 @@ class WeatherPad(gtk.Window):
         self.add(self.pad)
         self.show_all()
     
-    def auto_update_daemon(self):
-        '''
-        docs
-        '''
-        self.update_weather_information()
-        gobject.timeout_add(600000, self.auto_update_daemon)
     
     # I splited the update_weather_information into two parts for the purpose of refreshing the ui,
     # showing people that i'm updating alreay, gtk won't refresh the ui 
@@ -160,6 +204,7 @@ class WeatherPad(gtk.Window):
             print "update_weather_information"
             self.weather_information["temp"] = self.weather_information["temp"] + "  Updating..."
             gobject.timeout_add(100, self.update_weather_information_real)
+        return False
     def update_weather_information_real(self):
         print "update_weather_information_real"
         weather_information = yahoo_service.get_weather_information_by_woeid(self.woeid, self.location)
@@ -224,7 +269,7 @@ class WeatherPad(gtk.Window):
         cr.paint()
 
         time_pad_pixbuf = gtk.gdk.pixbuf_new_from_file("../data/images/time_pad.png")
-        cr.set_source_pixbuf(time_pad_pixbuf, 18, 0)
+        cr.set_source_pixbuf(time_pad_pixbuf, 10, 5)
         cr.paint()
 
         # Create pangocairo context.
@@ -238,7 +283,7 @@ class WeatherPad(gtk.Window):
         layout.set_text(str_time)
             
         # Draw text.
-        cr.move_to(35, 20)
+        cr.move_to(25, 25)
         context.update_layout(layout)
         context.show_layout(layout)
         
@@ -246,7 +291,7 @@ class WeatherPad(gtk.Window):
         layout.set_font_description(pango.FontDescription("Monaco 10"))
         layout.set_text(str_date + "  " + str_weekday)
         
-        cr.move_to(30, 115)
+        cr.move_to(20, 115)
         context.update_layout(layout)
         context.show_layout(layout)
         
