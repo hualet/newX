@@ -2,6 +2,9 @@ import gtk
 import cairo
 import pango
 import pangocairo
+import gobject
+
+from utils import (fade_in, fade_out)
 
 class WeatherForecastWindow(gtk.Window):
     '''
@@ -65,22 +68,32 @@ class WeatherForecastWindow(gtk.Window):
 
         cr.set_source_rgb(0, 0, 0)
         layout.set_text(weather_info["forecast1"]["text"])
-        cr.move_to(30, 263)
+        cr.move_to(10, 263)
         context.update_layout(layout)
         context.show_layout(layout)
         
         layout.set_text(weather_info["forecast1"]["low"] + "~" + weather_info["forecast1"]["high"])
-        cr.move_to(30, 280)
+        cr.move_to(10, 280)
+        context.update_layout(layout)
+        context.show_layout(layout)
+        
+        layout.set_text("Today")
+        cr.move_to(110, 280)
         context.update_layout(layout)
         context.show_layout(layout)
 
         layout.set_text(weather_info["forecast2"]["text"])
-        cr.move_to(185, 263)
+        cr.move_to(165, 263)
         context.update_layout(layout)
         context.show_layout(layout)
         
         layout.set_text(weather_info["forecast2"]["low"] + "~" + weather_info["forecast2"]["high"])
-        cr.move_to(185, 280)
+        cr.move_to(165, 280)
+        context.update_layout(layout)
+        context.show_layout(layout)
+        
+        layout.set_text("Tomorrow")
+        cr.move_to(240, 280)
         context.update_layout(layout)
         context.show_layout(layout)
 
@@ -91,3 +104,13 @@ class WeatherForecastWindow(gtk.Window):
         pixbuf2 = gtk.gdk.pixbuf_new_from_file("../data/images/icons/" + weather_info["forecast2"]["pic"] + ".png")
         cr.set_source_pixbuf(pixbuf2, 160, 160)
         cr.paint()
+
+        
+        self.set_opacity(0)
+        gobject.timeout_add(50, fade_in, self)
+        
+        
+    def self_fade_out_destroy(self):
+        self.set_opacity(1)
+        gobject.timeout_add(30, fade_out, self)
+        gobject.timeout_add(700, self.destroy)

@@ -65,6 +65,7 @@ class WeatherPad(gtk.Window):
         coord_x = event.x
         coord_y = event.y
         if 210 <= coord_x <= 270 and 117 <= coord_y <= 134:
+            self.set_opacity(1)
             gobject.timeout_add(45, fade_out, self, 0.05, self.open_preference)
         if 270 <= coord_x <= 300 and 110 <= coord_y <= 140:
             self.update_weather_information()
@@ -83,13 +84,13 @@ class WeatherPad(gtk.Window):
         else:
             if hasattr(self, "forecast_window"):            
                 if self.forecast_window:
-                    self.forecast_window.destroy()
+                    self.forecast_window.self_fade_out_destroy()
                     del self.forecast_window
             
     def leave_notify_callback(self, widget, event):
         if hasattr(self, "forecast_window"):            
             if self.forecast_window:
-                self.forecast_window.destroy()
+                self.forecast_window.self_fade_out_destroy()
                 del self.forecast_window
 
     def get_date_time_weekday(self):
@@ -103,6 +104,7 @@ class WeatherPad(gtk.Window):
     
     def open_preference(self, places_dict=None):
         self.remove(self.pad)
+        # for the fade in effect
         self.set_border_width(5)
         self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(29184, 49152, 59136))
         main_box = gtk.VBox(False, 1)
@@ -138,6 +140,8 @@ class WeatherPad(gtk.Window):
             self.add(self.pad)
             self.show_all()
             gobject.timeout_add(45, fade_in, self, 0.05)
+            
+        self.set_opacity(1)
         gobject.timeout_add(15, fade_out, self, 0.1, cancel_button_show_main)
     
         
