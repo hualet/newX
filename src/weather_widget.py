@@ -21,7 +21,8 @@ class WeatherPad(gtk.Window):
         gtk.Window.__init__(self)
         
         self.weather_information = weather_information
-        self.woeid = self.weather_information["woeid"]
+        if weather_information["woeid"]:
+            self.woeid = self.weather_information["woeid"]
         self.location = self.weather_information["location"]
         self.pad = gtk.DrawingArea()
         self.pad.add_events(gtk.gdk.ALL_EVENTS_MASK)

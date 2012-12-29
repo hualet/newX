@@ -16,7 +16,21 @@ if(not file_content):
     weather_info["text"] = "Unknown"
     weather_info["pic"] = "smile"
     weather_info["temp"] = ""
+    weather_info["woeid"] = None
     weather_info["location"] = "Location."
+    
+    weather_info["wind"] = "Unknown"
+    weather_info["humidity"] = "Unknown"
+    weather_info["visibility"] = "Unknown"
+
+    weather_info["forecast1"] = {
+        "low" : "",
+        "high" : "",
+        "text" : "Unknown",
+        "code" : "Unknown",
+        "pic" : "yahoo19"
+        }
+    weather_info["forecast2"] = weather_info["forecast1"]
 else:    
     weather_info = pickle.load(weather_info_file)
     weather_info_file.close()
