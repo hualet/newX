@@ -68,9 +68,7 @@ def get_woeid_by_place(place):
     '''
     try:
         yql = 'select woeid from geo.places where text = "' + place + '"'
-        print "yql : " + yql
         quoted_yql = urllib.quote_plus(yql.decode(sys.stdin.encoding).encode('utf8'))
-        print "quoted_yql : " + quoted_yql
         xml_str = urllib.urlopen("http://query.yahooapis.com/v1/public/yql?q=" + quoted_yql).read()
         
         dom = minidom.parseString(xml_str)
@@ -92,7 +90,6 @@ def get_weather_information_by_woeid(woeid, place):
     '''
     try:
         url_str = "http://weather.yahooapis.com/forecastrss?w=" + woeid + "&u=c"
-        print "url_str : " + url_str
         xml_str = urllib.urlopen(url_str).read()
         
         dom = minidom.parseString(xml_str)
@@ -128,7 +125,6 @@ def get_weather_information_by_woeid(woeid, place):
         weather_condition["woeid"] = woeid        
         weather_condition["location"] = place
 
-        print weather_condition
         config_dir = os.path.expanduser(r"~/.config/deepin-weather/")
         weather_info_file = open(config_dir + "weather_info_file", "w")
         pickle.dump(weather_condition, weather_info_file)
