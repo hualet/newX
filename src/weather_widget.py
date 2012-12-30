@@ -58,6 +58,7 @@ class WeatherPad(gtk.Window):
         self.connect("destroy", gtk.main_quit)
         self.show_all()
         gobject.timeout_add(600000, self.update_weather_information)
+        gobject.timeout_add(1000, self.refresh_ui)
 
     def button_press_callback(self, widget, event):
         '''
@@ -135,17 +136,18 @@ class WeatherPad(gtk.Window):
         '''
         docs
         '''
-        def cancel_button_show_main():
-            self.set_border_width(0)
-            self.remove(self.get_children()[0])
-            self.add(self.pad)
-            self.show_all()
-            gobject.timeout_add(45, fade_in, self, 0.05)
-            
         self.set_opacity(1)
-        gobject.timeout_add(15, fade_out, self, 0.1, cancel_button_show_main)
-    
+        gobject.timeout_add(15, fade_out, self, 0.1, self.cancel_place_button_show_main)
         
+        
+    def cancel_place_button_show_main(self):
+        self.set_border_width(0)
+        self.remove(self.get_children()[0])
+        self.add(self.pad)
+        self.show_all()
+        gobject.timeout_add(45, fade_in, self, 0.05)
+            
+            
     # to provide a better UE, then the button would not something like dead :-)
     def search_button_clicked(self, widget, text_entry, vbox):
         if(text_entry.get_text()):
@@ -172,12 +174,9 @@ class WeatherPad(gtk.Window):
         self.woeid = woeid
         self.location = place
         # the same trick here :-)
-        gobject.timeout_add(1, self.update_weather_information)
-        self.set_border_width(0)
-        self.set_opacity(1)
-        self.remove(self.get_children()[0])
-        self.add(self.pad)
-        self.show_all()
+        gobject.timeout_add(5, self.update_weather_information)
+        gobject.timeout_add(15, fade_out, self, 0.1, self.cancel_place_button_show_main)
+        
     
     
     # I splited the update_weather_information into two parts for the purpose of refreshing the ui,
@@ -185,12 +184,10 @@ class WeatherPad(gtk.Window):
     # even you explicitly called "queue_draw" or something while responsing the event_callbacks.
     def update_weather_information(self):
         if(hasattr(self, "woeid")):
-            print "update_weather_information"
             self.weather_information["temp"] = self.weather_information["temp"] + "  Updating..."
-            gobject.timeout_add(100, self.update_weather_information_real)
+            self.update_weather_information_real()
         return False
     def update_weather_information_real(self):
-        print "update_weather_information_real"
         weather_information = yahoo_service.get_weather_information_by_woeid(self.woeid, self.location)
         if(weather_information):
             self.weather_information = weather_information
@@ -281,4 +278,6 @@ class WeatherPad(gtk.Window):
         
         self.draw_weather_information(self.weather_information)
 
+    def refresh_ui(self):
         self.queue_draw()
+        return True
