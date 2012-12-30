@@ -2,8 +2,13 @@ import os
 import pickle
 import gtk
 from weather_widget import WeatherPad
+from utils import CONFIG_DIR as config_dir
 
-config_dir = os.path.expanduser(r"~/.config/deepin-weather/")
+import gettext
+from gettext import gettext as _
+gettext.bindtextdomain("newX", "../locale")
+gettext.textdomain('newX')
+
 if(not os.path.exists(config_dir)):
     os.makedirs(config_dir)
     open(config_dir + "weather_info_file", "w").close
@@ -13,21 +18,21 @@ file_content = weather_info_file.read()
 weather_info_file.seek(0)
 weather_info = {}
 if(not file_content):
-    weather_info["text"] = "Unknown"
+    weather_info["text"] = _("Unknown")
     weather_info["pic"] = "smile"
     weather_info["temp"] = ""
     weather_info["woeid"] = None
-    weather_info["location"] = "Location."
+    weather_info["location"] = _("Location.")
     
-    weather_info["wind"] = "Unknown"
-    weather_info["humidity"] = "Unknown"
-    weather_info["visibility"] = "Unknown"
+    weather_info["wind"] = _("Unknown")
+    weather_info["humidity"] = _("Unknown")
+    weather_info["visibility"] = _("Unknown")
 
     weather_info["forecast1"] = {
         "low" : "",
         "high" : "",
-        "text" : "Unknown",
-        "code" : "Unknown",
+        "text" : _("Unknown"),
+        "code" : _("Unknown"),
         "pic" : "yahoo19"
         }
     weather_info["forecast2"] = weather_info["forecast1"]

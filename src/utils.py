@@ -1,3 +1,11 @@
+import os
+
+import gettext
+from gettext import gettext as _
+gettext.bindtextdomain("newX", "../locale")
+gettext.textdomain("newX")
+
+CONFIG_DIR = os.path.expanduser("~/.config/newX/")
 
 def fade_in(widget, step=0.05, callback=None, *user_data):
     if widget.get_opacity() < 1:
@@ -46,13 +54,13 @@ def compute_wind(wind_speed, wind_direction):
             wind_level = x[1]
             break
     
-    direction = "N"
+    direction = _("N")
     degrees = [11.25] * 16
     for index, ele in enumerate(degrees):
         degrees[index] += (index * 22.5)
     directions = [
-        "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-        "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NWN",
+        _("N"), _("NNE"), _("NE"), _("ENE"), _("E"), _("ESE"), _("SE"), _("SSE"),
+        _("S"), _("SSW"), _("SW"), _("WSW"), _("W"), _("WNW"), _("NW"), _("NWN"),
         ]
     direction_list = zip(degrees, directions)
 
@@ -60,4 +68,4 @@ def compute_wind(wind_speed, wind_direction):
         if float(wind_direction) < x[0]:
             direction = x[1]
             break
-    return direction + "  " + "Level" + " " + str(wind_level)
+    return direction + "  " + str(wind_level) + _("LEVEL")

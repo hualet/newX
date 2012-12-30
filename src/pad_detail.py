@@ -4,6 +4,11 @@ import pango
 import pangocairo
 import gobject
 
+import gettext
+from gettext import gettext as _
+gettext.bindtextdomain("newX", "../locale")
+gettext.textdomain("newX")
+
 from utils import (fade_in, fade_out)
 
 class WeatherForecastWindow(gtk.Window):
@@ -51,17 +56,17 @@ class WeatherForecastWindow(gtk.Window):
         context.show_layout(layout)
         
         layout.set_font_description(pango.FontDescription("Monaco 9"))
-        layout.set_text("Visibility: " + weather_info["visibility"])
+        layout.set_text(_("Visibility") + ": " + weather_info["visibility"])
         cr.move_to(10, 130)
         context.update_layout(layout)
         context.show_layout(layout)
         
-        layout.set_text("Humidity: " + weather_info["humidity"])
+        layout.set_text(_("Humidity") + ": " + weather_info["humidity"])
         cr.move_to(10, 113)
         context.update_layout(layout)
         context.show_layout(layout)
         
-        layout.set_text("Wind: " + weather_info["wind"])
+        layout.set_text(_("Wind") + ": " + weather_info["wind"])
         cr.move_to(10, 96)
         context.update_layout(layout)
         context.show_layout(layout)
@@ -77,8 +82,8 @@ class WeatherForecastWindow(gtk.Window):
         context.update_layout(layout)
         context.show_layout(layout)
         
-        layout.set_text("Today")
-        cr.move_to(110, 280)
+        layout.set_text(_("Today"))
+        cr.move_to(100, 280)
         context.update_layout(layout)
         context.show_layout(layout)
 
@@ -92,7 +97,7 @@ class WeatherForecastWindow(gtk.Window):
         context.update_layout(layout)
         context.show_layout(layout)
         
-        layout.set_text("Tomorrow")
+        layout.set_text(_("Tomorrow"))
         cr.move_to(240, 280)
         context.update_layout(layout)
         context.show_layout(layout)

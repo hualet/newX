@@ -1,0 +1,260 @@
+# Copyright (C) Hualet Wang 2012.
+# This file is distributed under the same license as the newX package.
+# Hualet Wang <mr.asianwang@gmai.com>, 2012
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-12-30 15:04+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: main.py:20 main.py:26 main.py:27 main.py:28 main.py:33 main.py:34
+#: yahoo_service.py:117
+msgid "Unknown"
+msgstr ""
+
+#: main.py:24
+msgid "Location."
+msgstr ""
+
+#: pad_detail.py:58
+msgid "Visibility"
+msgstr ""
+
+#: pad_detail.py:63
+msgid "Humidity"
+msgstr ""
+
+#: pad_detail.py:68
+msgid "Wind"
+msgstr ""
+
+#: pad_detail.py:84
+msgid "Today"
+msgstr ""
+
+#: pad_detail.py:99
+msgid "Tomorrow"
+msgstr ""
+
+#: utils.py:52 utils.py:57
+msgid "N"
+msgstr ""
+
+#: utils.py:57
+msgid "NNE"
+msgstr ""
+
+#: utils.py:57
+msgid "NE"
+msgstr ""
+
+#: utils.py:57
+msgid "ENE"
+msgstr ""
+
+#: utils.py:57
+msgid "E"
+msgstr ""
+
+#: utils.py:57
+msgid "ESE"
+msgstr ""
+
+#: utils.py:57
+msgid "SE"
+msgstr ""
+
+#: utils.py:57
+msgid "SSE"
+msgstr ""
+
+#: utils.py:58
+msgid "S"
+msgstr ""
+
+#: utils.py:58
+msgid "SSW"
+msgstr ""
+
+#: utils.py:58
+msgid "SW"
+msgstr ""
+
+#: utils.py:58
+msgid "WSW"
+msgstr ""
+
+#: utils.py:58
+msgid "W"
+msgstr ""
+
+#: utils.py:58
+msgid "WNW"
+msgstr ""
+
+#: utils.py:58
+msgid "NW"
+msgstr ""
+
+#: utils.py:58
+msgid "NWN"
+msgstr ""
+
+#: utils.py:66
+msgid "LEVEL"
+msgstr ""
+
+#: weather_widget.py:115
+msgid "Search"
+msgstr ""
+
+#: weather_widget.py:116
+msgid "Cancel"
+msgstr ""
+
+#: weather_widget.py:126
+msgid "Set your location : "
+msgstr ""
+
+#: weather_widget.py:156
+msgid "Searching..."
+msgstr ""
+
+#: weather_widget.py:187
+msgid "Updating..."
+msgstr ""
+
+msgid "Tornado"
+msgstr ""
+
+msgid "Tropical storm"
+msgstr ""
+
+msgid "Hurricane"
+msgstr ""
+
+msgid "Severe thunderstorms"
+msgstr ""
+
+msgid "Thunderstorms"
+msgstr ""
+
+msgid "Mixed rain and snow"
+msgstr ""
+
+msgid "Mixed rain and sleet"
+msgstr ""
+
+msgid "Mixed snow and sleet"
+msgstr ""
+
+msgid "Freezing drizzle"
+msgstr ""
+
+msgid "Drizzle"
+msgstr ""
+
+msgid "Freezing rain"
+msgstr ""
+
+msgid "Showers"
+msgstr ""
+
+msgid "Snow flurries"
+msgstr ""
+
+msgid "Light snow showers"
+msgstr ""
+
+msgid "Blowing snow"
+msgstr ""
+
+msgid "Snow"
+msgstr ""
+
+msgid "Hail"
+msgstr ""
+
+msgid "Sleet"
+msgstr ""
+
+msgid "Dust"
+msgstr ""
+
+msgid "Foggy"
+msgstr ""
+
+msgid "Haze"
+msgstr ""
+
+msgid "Smoky"
+msgstr ""
+
+msgid "Blustery"
+msgstr ""
+
+msgid "Windy"
+msgstr ""
+
+msgid "Cold"
+msgstr ""
+
+msgid "Cloudy"
+msgstr ""
+
+msgid "Mostly cloudy"
+msgstr ""
+
+msgid "Partly cloudy"
+msgstr ""
+
+msgid "Clear"
+msgstr ""
+
+msgid "Sunny"
+msgstr ""
+
+msgid "Fair"
+msgstr ""
+
+msgid "Mixed rain and hail"
+msgstr ""
+
+msgid "Hot"
+msgstr ""
+
+msgid "Isolated thunderstorms"
+msgstr ""
+
+msgid "Scattered thunderstorms"
+msgstr ""
+
+msgid "Scattered showers"
+msgstr ""
+
+msgid "Heavy snow"
+msgstr ""
+
+msgid "Scattered snow showers"
+msgstr ""
+
+msgid "Thundershowers"
+msgstr ""
+
+msgid "Snow showers"
+msgstr ""
+
+msgid "Isolated thundershowers"
+msgstr ""
+
+msgid "Not available"
+msgstr ""

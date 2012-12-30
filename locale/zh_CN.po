@@ -1,0 +1,260 @@
+# Copyright (C) Hualet Wang 2012.
+# This file is distributed under the same license as the newX package.
+# Hualet Wang <mr.asianwang@gmail.com>, 2012
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-12-30 16:02+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: main.py:21 main.py:27 main.py:28 main.py:29 main.py:34 main.py:35
+#: yahoo_service.py:118
+msgid "Unknown"
+msgstr "未知"
+
+#: main.py:25
+msgid "Location."
+msgstr "位置"
+
+#: pad_detail.py:59
+msgid "Visibility"
+msgstr "可见度"
+
+#: pad_detail.py:64
+msgid "Humidity"
+msgstr "湿度"
+
+#: pad_detail.py:69
+msgid "Wind"
+msgstr "风"
+
+#: pad_detail.py:85
+msgid "Today"
+msgstr "今天"
+
+#: pad_detail.py:100
+msgid "Tomorrow"
+msgstr "明天"
+
+#: utils.py:57 utils.py:62
+msgid "N"
+msgstr "北风"
+
+#: utils.py:62
+msgid "NNE"
+msgstr "偏北风"
+
+#: utils.py:62
+msgid "NE"
+msgstr "东北风"
+
+#: utils.py:62
+msgid "ENE"
+msgstr "偏东风"
+
+#: utils.py:62
+msgid "E"
+msgstr "东风"
+
+#: utils.py:62
+msgid "ESE"
+msgstr "偏东风"
+
+#: utils.py:62
+msgid "SE"
+msgstr "东南风"
+
+#: utils.py:62
+msgid "SSE"
+msgstr "偏南风"
+
+#: utils.py:63
+msgid "S"
+msgstr "南风"
+
+#: utils.py:63
+msgid "SSW"
+msgstr "偏南风"
+
+#: utils.py:63
+msgid "SW"
+msgstr "西南风"
+
+#: utils.py:63
+msgid "WSW"
+msgstr "偏西风"
+
+#: utils.py:63
+msgid "W"
+msgstr "西风"
+
+#: utils.py:63
+msgid "WNW"
+msgstr "偏西风"
+
+#: utils.py:63
+msgid "NW"
+msgstr "西北风"
+
+#: utils.py:63
+msgid "NWN"
+msgstr "偏北风"
+
+#: utils.py:71
+msgid "LEVEL"
+msgstr "级"
+
+#: weather_widget.py:120
+msgid "Search"
+msgstr "搜索"
+
+#: weather_widget.py:121
+msgid "Cancel"
+msgstr "取消"
+
+#: weather_widget.py:131
+msgid "Set your location : "
+msgstr "设置你的位置:"
+
+#: weather_widget.py:161
+msgid "Searching..."
+msgstr "搜索中..."
+
+#: weather_widget.py:192
+msgid "Updating..."
+msgstr "更新中..."
+
+msgid "Tornado"
+msgstr "龙卷风"
+
+msgid "Tropical storm"
+msgstr "热带风暴"
+
+msgid "Hurricane"
+msgstr "飓风"
+
+msgid "Severe thunderstorms"
+msgstr "强雷暴"
+
+msgid "Thunderstorms"
+msgstr "雷暴"
+
+msgid "Mixed rain and snow"
+msgstr "雨加雪"
+
+msgid "Mixed rain and sleet"
+msgstr "雨夹雪"
+
+msgid "Mixed snow and sleet"
+msgstr "雨夹雪"
+
+msgid "Freezing drizzle"
+msgstr "冻细雨"
+
+msgid "Drizzle"
+msgstr "小雨"
+
+msgid "Freezing rain"
+msgstr "冻雨"
+
+msgid "Showers"
+msgstr "阵雨"
+
+msgid "Snow flurries"
+msgstr "小雪"
+
+msgid "Light snow showers"
+msgstr "小雪"
+
+msgid "Blowing snow"
+msgstr "暴雪"
+
+msgid "Snow"
+msgstr "降雪"
+
+msgid "Hail"
+msgstr "冰雹"
+
+msgid "Sleet"
+msgstr "雨夹雪"
+
+msgid "Dust"
+msgstr "沙尘"
+
+msgid "Foggy"
+msgstr "雾"
+
+msgid "Haze"
+msgstr "霾"
+
+msgid "Smoky"
+msgstr "烟"
+
+msgid "Blustery"
+msgstr "大风"
+
+msgid "Windy"
+msgstr "有风"
+
+msgid "Cold"
+msgstr "寒冷"
+
+msgid "Cloudy"
+msgstr "多云"
+
+msgid "Mostly cloudy"
+msgstr "多云"
+
+msgid "Partly cloudy"
+msgstr "晴间多云"
+
+msgid "Clear"
+msgstr "晴"
+
+msgid "Sunny"
+msgstr "晴"
+
+msgid "Fair"
+msgstr "晴"
+
+msgid "Mixed rain and hail"
+msgstr "冰雹"
+
+msgid "Hot"
+msgstr "炎热"
+
+msgid "Isolated thunderstorms"
+msgstr "局部雷暴"
+
+msgid "Scattered thunderstorms"
+msgstr "零星雷暴"
+
+msgid "Scattered showers"
+msgstr "零星阵雨"
+
+msgid "Heavy snow"
+msgstr "大雪"
+
+msgid "Scattered snow showers"
+msgstr "零星阵雪"
+
+msgid "Thundershowers"
+msgstr "雷阵雨"
+
+msgid "Snow showers"
+msgstr "阵雪"
+
+msgid "Isolated thundershowers"
+msgstr "局部雷阵雨"
+
+msgid "Not available"
+msgstr "无服务"

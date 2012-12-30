@@ -9,6 +9,11 @@ import yahoo_service
 from pad_detail import WeatherForecastWindow
 from utils import (fade_in, fade_out)
 
+import gettext 
+from gettext import gettext as _
+gettext.bindtextdomain("newX", "../locale")
+gettext.textdomain("newX")
+
 class WeatherPad(gtk.Window):
     '''
     class docs
@@ -112,8 +117,8 @@ class WeatherPad(gtk.Window):
         main_box = gtk.VBox(False, 1)
         hbox = gtk.HBox(False, 3)
         text_entry = gtk.Entry()
-        search_button = gtk.Button("Search")
-        cancel_button = gtk.Button("Cancel")
+        search_button = gtk.Button(_("Search"))
+        cancel_button = gtk.Button(_("Cancel"))
         hbox.pack_start(text_entry, True, True, 0)
         hbox.pack_start(search_button, False, False, 0)
         hbox.pack_start(cancel_button, False, False, 0)
@@ -123,7 +128,7 @@ class WeatherPad(gtk.Window):
         vbox = gtk.VBox()
         result_window.add_with_viewport(vbox)
         
-        main_box.pack_start(gtk.Label("Set your location : "), False, False, 0)
+        main_box.pack_start(gtk.Label(_("Set your location : ")), False, False, 0)
         main_box.pack_start(hbox, False, False, 2)
         main_box.pack_start(result_window, True, True, 2)
         search_button.connect("clicked", self.search_button_clicked, text_entry, vbox)
@@ -153,7 +158,7 @@ class WeatherPad(gtk.Window):
         if(text_entry.get_text()):
             for widget in vbox.get_children():
                 vbox.remove(widget)
-            label = gtk.Label("Searching...")
+            label = gtk.Label(_("Searching..."))
             vbox.pack_start(label, False, False, 0)
             self.show_all()
             gobject.timeout_add(1, self.preference_find_place, widget, text_entry, vbox, label)
@@ -174,8 +179,9 @@ class WeatherPad(gtk.Window):
         self.woeid = woeid
         self.location = place
         # the same trick here :-)
-        gobject.timeout_add(5, self.update_weather_information)
-        gobject.timeout_add(15, fade_out, self, 0.1, self.cancel_place_button_show_main)
+        #gobject.timeout_add(1, self.update_weather_information)
+        self.update_weather_information()
+        gobject.timeout_add(10, fade_out, self, 0.01, self.cancel_place_button_show_main)
         
     
     
@@ -184,10 +190,12 @@ class WeatherPad(gtk.Window):
     # even you explicitly called "queue_draw" or something while responsing the event_callbacks.
     def update_weather_information(self):
         if(hasattr(self, "woeid")):
-            self.weather_information["temp"] = self.weather_information["temp"] + "  Updating..."
-            self.update_weather_information_real()
+            self.weather_information["temp"] = self.weather_information["temp"] + "  " + _("Updating...")
+            self.queue_draw()
+            gobject.timeout_add(100, self.update_weather_information_real)
         return False
     def update_weather_information_real(self):
+        print "update"
         weather_information = yahoo_service.get_weather_information_by_woeid(self.woeid, self.location)
         if(weather_information):
             self.weather_information = weather_information
