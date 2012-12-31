@@ -1,4 +1,5 @@
 import os
+import gobject
 
 import gettext
 from gettext import gettext as _
@@ -32,6 +33,22 @@ def fade_out(widget, step=0.05, callback=None, *user_data):
     else:
         return False
     return True
+
+def fancy_move_x(time, v, widget, attr, condition, limit_low, limit_high, step = 0.003):
+    direction = v 
+    
+    if v > 0:
+        v = v - step
+    else:
+        v = v + step
+        
+    if getattr(widget, condition) and v * direction > 0 and limit_low <= widget.pos+v*time <=limit_high:
+        temp_attr = getattr(widget, attr)
+        temp_attr += v * time
+        widget.queue_draw()
+        
+        gobject.timeout_add(10, fancy_move_x, 10, v, widget, attr, condition, limit_low, limit_high)
+
 
 def compute_wind(wind_speed, wind_direction):
     level_list = [
