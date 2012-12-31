@@ -36,7 +36,8 @@ if(not file_content):
         "high" : "",
         "text" : _("Unknown"),
         "code" : _("Unknown"),
-        "pic" : "yahoo19"
+        "pic" : "yahoo19",
+        "day" : ""
         }
     weather_info["forecast2"] = weather_info["forecast3"] = weather_info["forecast4"] = weather_info["forecast5"] = weather_info["forecast1"]
 else:    
