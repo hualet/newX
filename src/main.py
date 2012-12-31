@@ -1,4 +1,5 @@
 import os
+import sys
 import pickle
 import gtk
 from weather_widget import WeatherPad
@@ -11,6 +12,8 @@ gettext.textdomain('newX')
 
 if(not os.path.exists(config_dir)):
     os.makedirs(config_dir)
+    open(config_dir + "weather_info_file", "w").close
+elif not os.path.exists(config_dir + "weather_info_file"):
     open(config_dir + "weather_info_file", "w").close
 
 weather_info_file = open(config_dir + r"weather_info_file")
@@ -35,11 +38,14 @@ if(not file_content):
         "code" : _("Unknown"),
         "pic" : "yahoo19"
         }
-    weather_info["forecast2"] = weather_info["forecast1"]
+    weather_info["forecast2"] = weather_info["forecast3"] = weather_info["forecast4"] = weather_info["forecast5"] = weather_info["forecast1"]
 else:    
-    weather_info = pickle.load(weather_info_file)
-    weather_info_file.close()
-# weather_info["from"] = "from_file"
+    try:
+        weather_info = pickle.load(weather_info_file)
+        weather_info_file.close()
+    except Exception:
+        open(config_dir + "weather_info_file", "w").close
+        sys.exit()
 
 WeatherPad(weather_info)
 gtk.main()

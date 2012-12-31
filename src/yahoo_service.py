@@ -117,26 +117,45 @@ def get_weather_information_by_woeid(woeid, place):
         if weather_condition["visibility"] == u"":
             weather_condition["visibility"] = _("Unknown")
         
-        weather_forecast_eles = root.getElementsByTagName("yweather:forecast")
-        for index, ele in enumerate(weather_forecast_eles):
-            index += 1
-            weather_condition["forecast" + str(index)] = {}
-            weather_condition["forecast" + str(index)]["low"] = ele.getAttribute("low")
-            weather_condition["forecast" + str(index)]["high"] = ele.getAttribute("high") + u"\u2103"
-            weather_condition["forecast" + str(index)]["code"] = ele.getAttribute("code")
-            weather_condition["forecast" + str(index)]["text"] = code_icon_dict[int(ele.getAttribute("code"))][1]
-            weather_condition["forecast" + str(index)]["pic"] = code_icon_dict[int(ele.getAttribute("code"))][0]
-        
         weather_condition["woeid"] = woeid        
         weather_condition["location"] = place
+        
+        link = root.getElementsByTagName("link")[0].childNodes[0].nodeValue
+        zipcode = link.split(r"/")[-1].split(".")[0]
 
-        weather_info_file = open(config_dir + "weather_info_file", "w")
-        pickle.dump(weather_condition, weather_info_file)
-        weather_info_file.close()
+        get_5_days_forecast(zipcode, weather_condition)
+        
         return weather_condition
     except Exception, e:
         print e
         return None
+
+def get_5_days_forecast(zipcode, weather_condition):
+    try:
+        yql = "select * from rss where url='http://xml.weather.yahoo.com/forecastrss/%s.xml'" % zipcode
+        quoted_yql = urllib.quote_plus(yql.decode(sys.stdin.encoding).encode('utf8'))
+        xml_str = urllib.urlopen("http://query.yahooapis.com/v1/public/yql?q=" + quoted_yql).read()
+        
+        dom = minidom.parseString(xml_str)
+        root = dom.documentElement
+        weather_forecast_eles = root.getElementsByTagName("yweather:forecast")
+        for index, ele in enumerate(weather_forecast_eles):
+            index += 1
+            weather_condition["forecast" + str(index)] = {}
+            weather_condition["forecast" + str(index)]["low"] = ele.getAttribute("low") + "~"
+            weather_condition["forecast" + str(index)]["high"] = ele.getAttribute("high") + u"\u2103"
+            weather_condition["forecast" + str(index)]["code"] = ele.getAttribute("code")
+            weather_condition["forecast" + str(index)]["day"] = ele.getAttribute("day")
+            weather_condition["forecast" + str(index)]["text"] = code_icon_dict[int(ele.getAttribute("code"))][1]
+            weather_condition["forecast" + str(index)]["pic"] = code_icon_dict[int(ele.getAttribute("code"))][0]
+        
+        weather_info_file = open(config_dir + "weather_info_file", "w")
+        pickle.dump(weather_condition, weather_info_file)
+        weather_info_file.close()
+    except Exception, e:
+        print e
+        return None
+    
 
 def get_place_by_woeid(woeid):
     '''

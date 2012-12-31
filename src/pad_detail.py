@@ -9,7 +9,7 @@ from gettext import gettext as _
 gettext.bindtextdomain("newX", "../locale")
 gettext.textdomain("newX")
 
-from utils import (fade_in, fade_out)
+from utils import (fade_in, fade_out, fancy_move_x)
 
 class WeatherForecastWindow(gtk.Window):
     '''
@@ -27,12 +27,37 @@ class WeatherForecastWindow(gtk.Window):
         self.set_skip_taskbar_hint(True)
         self.set_colormap(gtk.gdk.Screen().get_rgba_colormap())        
         
+        self.DRAG_POS_X = 0
+        
         self.area = gtk.DrawingArea()
         self.area.add_events(gtk.gdk.ALL_EVENTS_MASK)
         self.area.connect("expose-event", self.area_expose, weather_info)
+        self.area.connect("enter-notify-event", self.enter_notify_callback)
+        self.area.connect("leave-notify-event", lambda w, e : self.self_fade_out_destroy(self.master_win))
+        self.area.connect("button-press-event", self.button_press_callback)
+        self.area.connect("button-release-event", self.button_release_callback)
         
         self.add(self.area)
         self.show_all()
+        
+    def enter_notify_callback(self, widget, event):
+        if hasattr(self, "fade_out_id"):
+            gobject.source_remove(self.fade_out_id)
+        if hasattr(self, "destroy_id"):
+            gobject.source_remove(self.destroy_id)
+        self.set_opacity(1)
+        
+    def button_press_callback(self, widget, event):
+        coord_x = event.x
+        coord_y = event.y
+
+        if 0 <= coord_x <= 300 and 150 <= coord_y <= 300:
+            self.drag_begin_pos = coord_x
+            self.drag_begin_time = event.time
+        
+    def button_release_callback(self, widget, event):
+        v = (event.x - self.drag_begin_pos) / (event.time - self.drag_begin_time)
+        gobject.timeout_add(10, fancy_move_x, 10, v, self, -450, 0)
 
     def area_expose(self, widget, event, weather_info):
         cr = widget.window.cairo_create()
@@ -70,52 +95,40 @@ class WeatherForecastWindow(gtk.Window):
         cr.move_to(10, 96)
         context.update_layout(layout)
         context.show_layout(layout)
+        
+        pixbuf_sep = gtk.gdk.pixbuf_new_from_file("../data/images/seperator.png")
+        
+        for i in 1, 2, 3, 4, 5:
+            cr.set_source_rgb(0, 0, 0)
+            layout.set_text(weather_info["forecast" + str(i)]["text"])
+            cr.move_to(self.DRAG_POS_X + 10 + 150 * (i - 1), 263)
+            context.update_layout(layout)
+            context.show_layout(layout)
+        
+            layout.set_text(weather_info["forecast" + str(i)]["low"] + weather_info["forecast" + str(i)]["high"])
+            cr.move_to(self.DRAG_POS_X + 10 + 150 * (i - 1), 280)
+            context.update_layout(layout)
+            context.show_layout(layout)
+        
+            layout.set_text(weather_info["forecast" + str(i)]["day"])
+            cr.move_to(self.DRAG_POS_X + 105 + 150 * (i - 1), 280)
+            context.update_layout(layout)
+            context.show_layout(layout)
 
-        cr.set_source_rgb(0, 0, 0)
-        layout.set_text(weather_info["forecast1"]["text"])
-        cr.move_to(10, 263)
-        context.update_layout(layout)
-        context.show_layout(layout)
-        
-        layout.set_text(weather_info["forecast1"]["low"] + "~" + weather_info["forecast1"]["high"])
-        cr.move_to(10, 280)
-        context.update_layout(layout)
-        context.show_layout(layout)
-        
-        layout.set_text(_("Today"))
-        cr.move_to(100, 280)
-        context.update_layout(layout)
-        context.show_layout(layout)
+            cr.set_source_pixbuf(pixbuf_sep, self.DRAG_POS_X + 149 * i, 175)
+            cr.paint()
 
-        layout.set_text(weather_info["forecast2"]["text"])
-        cr.move_to(165, 263)
-        context.update_layout(layout)
-        context.show_layout(layout)
-        
-        layout.set_text(weather_info["forecast2"]["low"] + "~" + weather_info["forecast2"]["high"])
-        cr.move_to(165, 280)
-        context.update_layout(layout)
-        context.show_layout(layout)
-        
-        layout.set_text(_("Tomorrow"))
-        cr.move_to(240, 280)
-        context.update_layout(layout)
-        context.show_layout(layout)
 
-        pixbuf1 = gtk.gdk.pixbuf_new_from_file("../data/images/icons/" + weather_info["forecast1"]["pic"] + ".png")
-        cr.set_source_pixbuf(pixbuf1, 10, 160)
-        cr.paint()
-        
-        pixbuf2 = gtk.gdk.pixbuf_new_from_file("../data/images/icons/" + weather_info["forecast2"]["pic"] + ".png")
-        cr.set_source_pixbuf(pixbuf2, 160, 160)
-        cr.paint()
-
-        
-        self.set_opacity(0)
-        gobject.timeout_add(50, fade_in, self)
+            pixbuf_forecast = gtk.gdk.pixbuf_new_from_file("../data/images/icons/" + 
+                                                           weather_info["forecast" + str(i)]["pic"] + ".png")
+            cr.set_source_pixbuf(pixbuf_forecast, self.DRAG_POS_X + 10 + 150 * (i - 1), 165)
+            cr.paint()
         
         
-    def self_fade_out_destroy(self):
+    def self_fade_out_destroy(self, master_win):
         self.set_opacity(1)
-        gobject.timeout_add(30, fade_out, self)
-        gobject.timeout_add(700, self.destroy)
+        self.master_win = master_win
+        self.fade_out_id = gobject.timeout_add(30, fade_out, self)
+        self.destroy_id = gobject.timeout_add(700, self.destroy)
+        if hasattr(master_win, "forecast_window"):
+            del master_win.forecast_window

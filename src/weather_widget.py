@@ -88,17 +88,17 @@ class WeatherPad(gtk.Window):
                 pos_x = temp_x 
                 pos_y = temp_y + hight
                 self.forecast_window = WeatherForecastWindow(self.weather_information, pos_x, pos_y)
+                self.forecast_window.set_opacity(0)
+                gobject.timeout_add(50, fade_in, self.forecast_window)
         else:
             if hasattr(self, "forecast_window"):            
                 if self.forecast_window:
-                    self.forecast_window.self_fade_out_destroy()
-                    del self.forecast_window
+                    self.forecast_window.self_fade_out_destroy(self)
             
     def leave_notify_callback(self, widget, event):
         if hasattr(self, "forecast_window"):            
             if self.forecast_window:
-                self.forecast_window.self_fade_out_destroy()
-                del self.forecast_window
+                self.forecast_window.self_fade_out_destroy(self)
 
     def get_date_time_weekday(self):
         '''
@@ -166,9 +166,10 @@ class WeatherPad(gtk.Window):
         woeid_list = yahoo_service.get_woeid_by_place(text_entry.get_text())
         for woeid in woeid_list:
             place_dict = yahoo_service.get_place_by_woeid(woeid)
-            button = gtk.Button(place_dict["all"])
-            button.connect("clicked", self.place_button_clicked, woeid, text_entry.get_text())
-            vbox.pack_start(button, False, False, 0)
+            if place_dict:
+                button = gtk.Button(place_dict["all"])
+                button.connect("clicked", self.place_button_clicked, woeid, text_entry.get_text())
+                vbox.pack_start(button, False, False, 0)
         vbox.remove(label)
         self.show_all()
             
@@ -178,11 +179,10 @@ class WeatherPad(gtk.Window):
         '''
         self.woeid = woeid
         self.location = place
-        # the same trick here :-)
-        #gobject.timeout_add(1, self.update_weather_information)
-        self.update_weather_information()
+
         gobject.timeout_add(10, fade_out, self, 0.01, self.cancel_place_button_show_main)
-        
+        # the same trick here :-)
+        gobject.timeout_add(2000, self.update_weather_information)
     
     
     # I splited the update_weather_information into two parts for the purpose of refreshing the ui,
